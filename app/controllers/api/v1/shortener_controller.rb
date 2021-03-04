@@ -1,3 +1,5 @@
+require_relative '../../../../lib/modules/shortener'
+
 class Api::V1::ShortenerController < ApplicationController
   include ActionController::MimeResponds
 
@@ -5,7 +7,13 @@ class Api::V1::ShortenerController < ApplicationController
     @urls = $redis.hgetall("shortened_urls")
   end
 
-  def create
+  def show
+    short_url = params["url"]
+    if short_url
+      # get the corresponding full url
+      full_url = $redis.hget("shortened_urls", short_url)
+      redirect_to full_url, status: :moved_permanently
+    end
   end
 
   def shorten

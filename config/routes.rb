@@ -5,7 +5,7 @@ Rails.application.routes.draw do
       post "shorten",  to: "shortener#shorten"
       get "index", to: "shortener#index", as: :shortened_urls
       get 'create',    to: "shortener#create"
-      get 'show', to: "shortener#show/:url"
+      get 'show', to: "shortener#show", as: :go_to
     end
   end
 end

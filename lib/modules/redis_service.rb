@@ -7,12 +7,16 @@ module RedisService
     self
   end
 
-  def self.set(k,v)
-    @redis.set(k,v)
+  def self.hset(k, *attrs)
+    @redis.hset(k, *attrs)
   end
 
   def self.get(k)
     @redis.get(k)
+  end
+
+  def self.hget(k, *args)
+    @redis.hget(k, *args)
   end
 
   def self.hgetall(k)

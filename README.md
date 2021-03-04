@@ -1,24 +1,22 @@
-# README
+## Simple app to shorten URLs
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Uses docker and can be run in the two following ways:
+-`docker-compose up -d`\
+-`docker-compose run --service-ports app`: for debugging, add your pries or binding.irb where needed
 
-Things you may want to cover:
+**URL formats are checked before they are shortened**
+You can pass URLS in the following formats:
+1. `http(s)://(www.)google.com`
+2. `google.co.uk`
+3. `www.google.com`
 
-* Ruby version
+Keys can be created by submitting JSON to the `/shorten` endpoint:
+`docker-compose exec app curl - XPOST localhost:3000 -d '{"uri":"http://bionic.co.uk"}' -H "Content-Type: application/json" -H "Accept: application/json"`
 
-* System dependencies
+If the key passes validations it will be persisted in a Redis Hash called at key `shortened_urls`
+You can visit `/index` to see the keys
+If you want to check what's in Redis you can:
+`docker-compose exec redis redis-cli`
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Run the test
+`docker-compose exec app bundle exec rspec -fd`
