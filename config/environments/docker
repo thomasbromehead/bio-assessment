@@ -1,7 +1,0 @@
-DB_HOST=database
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=securepassword123
-POSTGRES_DB=bionic_development
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=securepassword123
-REDIS_HOST=redis
