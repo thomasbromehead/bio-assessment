@@ -19,6 +19,8 @@ require "sprockets/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+$redis = nil
+
 module BionicHtml
   class Application < Rails::Application
     # Use the responders controller from the responders gem
@@ -26,7 +28,7 @@ module BionicHtml
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
-    config.autoload_paths += %W(#{Rails.root}/lib)
+    config.autoload_paths += %W(#{Rails.root}/lib/modules)
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -37,5 +39,14 @@ module BionicHtml
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+  end
+
+  def self.redis_config
+    Rails.application.config.redis.with_indifferent_access
+  end
+
+  Rails::Railtie::Configuration.new.after_initialize do
+    $redis = RedisService.start(::BionicHtml.redis_config[:host], ::BionicHtml.redis_config[:port])
+    puts "Redis started: #{::BionicHtml.redis_config}"
   end
 end

@@ -1,0 +1,29 @@
+version: '3.8'
+volumes:
+    db_data:
+    gem_cache:
+services:
+    app:
+        build: .
+        env_file:
+            - ./config/environments/docker
+        ports:
+            - "3000:3000"
+        depends_on:
+            - database
+            - redis
+        volumes:
+            - .:/usr/src/bionic
+            - gem_cache:/gems
+        command: bash -c "rm -f tmp/pids/server.pid &&
+                  bundle exec bin/rails server -p 3000 -b '0.0.0.0'"
+    database:
+        image: postgres:9.6
+        env_file:
+            - ./config/environments/database
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        ports:
+            - "3306"
+    redis:
+      image: redis

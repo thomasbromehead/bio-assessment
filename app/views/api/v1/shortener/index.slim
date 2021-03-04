@@ -1,0 +1,9 @@
+div
+table#items
+  thead
+    td Shortened
+    td Full
+  - for url in @urls
+    tr
+      td = link_to url[0], show_path(url: url[0])
+      td = url[1]

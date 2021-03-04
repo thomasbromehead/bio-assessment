@@ -1,7 +1,12 @@
-require_relative '../../../../lib/modules/shortener'
-
 class Api::V1::ShortenerController < ApplicationController
   include ActionController::MimeResponds
+
+  def index
+    @urls = $redis.hgetall("shortened_urls")
+  end
+
+  def create
+  end
 
   def shorten
     body = request.body.read
@@ -18,11 +23,12 @@ class Api::V1::ShortenerController < ApplicationController
         protocol, prefix, host, domain = matchData.captures
       end
       short_url = shortener.create_short_url(protocol: protocol, host: host, domain: domain)
+      $redis.hset("shortened_urls", short_url, uri)
     end
     respond_to do |format|
       format.json do
         if @valid
-          render json: { short: uri, original: uri }, status: 201
+          render json: { short: short_url, original: uri }, status: 201
         else
           render json: { success: false, error: shortener::MalformedUrl }, status: 422
         end
