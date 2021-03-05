@@ -1,4 +1,4 @@
-require_relative '../../../../lib/modules/shortener'
+require_relative '../../../../lib/modules/url_shortener'
 
 class Api::V1::ShortenerController < ApplicationController
   include ActionController::MimeResponds

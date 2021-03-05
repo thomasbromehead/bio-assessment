@@ -12,7 +12,7 @@ module UrlShortener
   end
 
   def self.create_short_url(protocol:, host:, domain:)
-    encoded = Base64.urlsafe_encode64("#{host}#{domain}", padding:false)[0..5]
+    encoded = Base64.urlsafe_encode64("#{host}#{domain}", padding:false)[0..2]
     url = ShortUrl.new(protocol, encoded, domain)
     class << url
       def to_s
