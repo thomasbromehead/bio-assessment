@@ -4,7 +4,6 @@ Rails.application.routes.draw do
     scope module: "v1" do
       post "shorten",  to: "shortener#shorten"
       get "index", to: "shortener#index", as: :shortened_urls
-      get 'create',    to: "shortener#create"
       get 'show', to: "shortener#show", as: :go_to
     end
   end

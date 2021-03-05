@@ -4,6 +4,42 @@ table#items
     td Shortened
     td Full
   - for url in @urls
-    tr
-      td#url[0] = link_to url[0], go_to_path(url: url[0])
-      td = url[1]
+    = render(partial: "shared/url.slim", locals: {url: url})
+
+h1 Shorten a URL here
+= form_with url: shorten_path do |form|
+ = form.text_field :uri, id:"url", placeholder: "http://bionic.co.uk"
+ = form.button "Submit", id: "submit"
+
+javascript:
+  document.addEventListener('DOMContentLoaded', () => {
+        const submit_button = document.getElementById("submit")
+        console.log(submit_button)
+        if(submit_button){
+          submit_button.addEventListener('click', (e) => {
+            e.preventDefault()
+            let value;
+            const input = document.getElementById("url")
+            if(input){
+              console.log(input.value)
+              value = input.value;
+            }
+            fetch('shorten', {
+                method: 'POST',
+                headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({"uri": value})
+            })
+            .then(res => res.json())
+            .then(res => {
+              document.getElementById("items").insertAdjacentHTML('beforeend', res.content)
+            })
+          })
+        }
+  })
+
+
+
+

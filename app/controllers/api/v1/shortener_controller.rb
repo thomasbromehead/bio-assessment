@@ -17,39 +17,45 @@ class Api::V1::ShortenerController < ApplicationController
   end
 
   def shorten
-    body = request.body.read
-    if body.blank?
-      uri = params.try(:[], "uri")
-    else
+    json_call = request.headers["Content-Type"] == "application/json"
+    if json_call
+      body = request.body.read rescue ""
       uri = JSON.parse(body).try(:[], "uri")
+    else
+      uri = params.try(:[], "uri")
     end
-    # Validate the format
-    protocol, prefix, host, domain = [nil, nil, nil, nil]
-    if shortener.valid_url?(uri)
-      @valid = true
-      shortener.set_protocol_and_host(uri) do |matchData|
-        protocol, prefix, host, domain = matchData.captures
-      end
-      short_url = shortener.create_short_url(protocol: protocol, host: host, domain: domain)
-      $redis.hset("shortened_urls", short_url, uri)
-    end
-    respond_to do |format|
-      format.json do
+    short_url = do_shorten(uri)
         if @valid
-          render json: { short: short_url, original: uri }, status: 201
+          url_html = render_to_string("shared/_url", locals: {url: [short_url, uri]}, layout: false)
+          render json: { success: true, short: short_url, original: uri, content: url_html  }, status: 201
         else
+          binding.irb
           render json: { success: false, error: shortener::MalformedUrl }, status: 422
         end
-      end
-      format.js {}
-      format.html do
-        redirect_to Rails.application.routes.url_helpers.shortened_urls_path, success: "Your url was shortened successfully!"
-      end
-    end
+     # format.html do
+     #   redirect_to Rails.application.routes.url_helpers.shortened_urls_path, success: "Your url was shortened successfully!"
+     # end
+     # format.js {}
    end
 
  private
  def shortener
     ::UrlShortener
+ end
+
+ def do_shorten(uri)
+  protocol, prefix, host, domain = [nil, nil, nil, nil]
+  binding.irb
+  if shortener.valid_url?(uri)
+    binding.irb
+    @valid = true
+    shortener.set_protocol_and_host(uri) do |matchData|
+      protocol, prefix, host, domain = matchData.captures
+    end
+    short_url = shortener.create_short_url(protocol: protocol, host: host, domain: domain)
+    $redis.hset("shortened_urls", short_url, uri)
+    return short_url
+  end
+  false
  end
 end

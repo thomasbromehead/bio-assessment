@@ -1,6 +1,6 @@
 module UrlShortener
 
-  CorrectFormat = %r(^(https?:\/\/)?(w{3})?\.?([a-z]+)\.([a-z]{3}|[a-z]{2}\.[a-z]{2})$)
+  CorrectFormat = %r(^(https?:\/\/)?(w{3})?\.?([a-z]+)\.([a-z]{2,3}|[a-z]{2}\.[a-z]{2})$)
   MalformedUrl = "You submitted a malformed URL".freeze
 
   def self.valid_url?(url)
